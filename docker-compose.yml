@@ -1,0 +1,43 @@
+version : '3'
+services :
+
+  php7.4-fpm:
+     container_name: php7.4-fpm
+     restart: always
+     image : sugenk/php7.4-fpm-alpine
+     volumes:
+       - ./www:/var/www/html
+     expose:
+       - 9000
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+            PMA_HOST : mysql
+    ports:
+      - "8000:80"
+
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./logs:/var/log/nginx/
+      - ./www:/var/www/html
+    ports:
+            - "443:443"
+
+  mysql:
+    container_name: mysql
+    image: mariadb:10.3
+    environment:
+        MYSQL_ROOT_PASSWORD: rootdocker
+    volumes:
+        - ./db/:/var/lib/mysql
+        - ./logs/mysql:/var/log/mysql
+    ports:
+      - 3306:3306
+      
